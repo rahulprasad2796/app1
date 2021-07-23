@@ -1,15 +1,21 @@
 import axios from 'axios';
 import "./card.css"
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
+import PropTypes from "prop-types";
 
 
 export const Card = (props) => {
-    const {firstName, lastName, email, phone, addProduct} = props;
+    const {id, firstName, lastName, email, phone, addProduct} = props;
 
     return ( <div>
       <p>Name: {firstName} {lastName}</p>
       <p>Email: {email} </p>
       <p>Phone: {phone}</p>
+      <Link to={{
+          pathname: "/person/" + parseInt(id/100),
+          firstName
+      }}>Info</Link> {/*it gives information to the path with id  */}
       <button onClick={() => {addProduct(props)}}>Submit</button>
       {/* here we are sending whole props through addProduct, the name or var addproduct will be same through out */}
     </div> );
@@ -38,7 +44,6 @@ export const Cards = () => {
             method: "GET"
         })
         .then(res => res.json())
-        .then(res => console.log(res))
     }, [])
 
 
@@ -47,12 +52,10 @@ export const Cards = () => {
         const response = await axios
         .get("https://60eedf19eb4c0a0017bf468a.mockapi.io/data")
         .then((res) => {
-            console.log(res);
             return res.data;
         });
-        console.log(response);
         setProducts(response);
-        setLoader(false);
+        setLoader(!loader);
     }
 
 
@@ -80,7 +83,7 @@ export const Cards = () => {
 
     const handleProduct = (product) => {
         // product here is props send from card through add product
-        console.log(product);
+        
         const updateCart = [...cart, product]
         setCart(updateCart);
     }
@@ -98,3 +101,7 @@ export const Cards = () => {
     </div>);
 }
  
+Card.propTypes = { //note the syntax and the case
+    firstName: PropTypes.string,
+    // lastName: PropTypes.number - shows error as expecting number and given string
+}
